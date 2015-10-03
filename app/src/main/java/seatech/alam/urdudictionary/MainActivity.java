@@ -4,23 +4,42 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+
+import seatech.alam.urdudictionary.adapters.ViewPagerAdapter;
+import seatech.alam.urdudictionary.util.DBOpenHelper;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tv ;
+    public ViewPager viewPager ;
+    public ViewPagerAdapter pagerAdapter;
+    TabLayout tabLayout ;
+    SearchView searchView;
+
+    public String wotd="alamo";
+    public String word=wotd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        tv = (TextView) findViewById(R.id.tv) ;
+        setupToolbar();
+        viewPager = (ViewPager) findViewById(R.id.viewpager) ;
+        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs) ;
+        pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),this);
+        viewPager.setAdapter(pagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 
         // Get the intent, verify the action and get the query
         handleIntent(getIntent());
@@ -28,9 +47,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doMySearch(String query){
-        tv.setText(query);
+
     }
-    private void doMyView(String query){tv.setText("get Detail of = "+query);}
+    private void doMyView(String query){
+
+
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -41,14 +63,32 @@ public class MainActivity extends AppCompatActivity {
     private void handleIntent(Intent intent){
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
+            searchView.setQuery(query,false);
+            searchView.clearFocus();
             doMySearch(query);
         } else if(Intent.ACTION_VIEW.equals(intent.getAction())){
             Uri data = intent.getData() ;
-            String word = data.getLastPathSegment();
-            doMyView(word);
+            try{
+                String word = data.getLastPathSegment();
+                searchView.setQuery(word,false);
+                searchView.clearFocus();
+                doMyView(word);
+            }catch (NullPointerException npe){
+                word = intent.getStringExtra("WORD");
+                doMyView(word);
+            }
+            viewPager.setCurrentItem(1, true);
+
         }
     }
 
+
+    private void setupToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(false);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -57,10 +97,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
 
         return true;
     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursorDriver;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
@@ -67,11 +68,27 @@ public class DBOpenHelper extends SQLiteAssetHelper {
         return result ;
     }
 
+    public Cursor getWord(String query){
+        String sql = "select "+FIELD_WORD+", _id from "+TABLE_NAME+" where "+FIELD_WORD+" like '"+query+"%'";
+        Cursor result = getReadableDatabase().rawQuery(sql, null);
+        return result ;
+    }
+
     public Cursor getDetail(int id){
 
         String sql = "select * from urdu where _id = "+id ;
         Cursor result = getReadableDatabase().rawQuery(sql,null);
         return result ;
+    }
+
+    public Cursor getDetail(String word){
+
+        String sql = "select * from urdu where word = '"+word+"'" ;
+        Log.e("Database",sql);
+        Cursor result = getReadableDatabase().rawQuery(sql,null);
+
+        return result ;
+
     }
 
 
