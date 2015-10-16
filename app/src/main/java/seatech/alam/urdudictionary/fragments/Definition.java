@@ -20,6 +20,7 @@ import seatech.alam.urdudictionary.util.DBOpenHelper;
  */
 public class Definition extends Fragment {
 
+    final String TAG = "Definition" ;
     MainActivity activity;
     TextView word;
     TextView urdu;
@@ -31,6 +32,32 @@ public class Definition extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity= (MainActivity) activity;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.e(TAG, "onStart() called ");
+        wordt=activity.word;
+        Cursor cursor = dbOpenHelper.getDetail(wordt);
+        cursor.moveToFirst();
+        word.setText(cursor.getString(1));
+        roman.setText(cursor.getString(2));
+        urdu.setText(cursor.getString(3));
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(TAG, "onResume() called ");
+        wordt=activity.word;
+        Cursor cursor = dbOpenHelper.getDetail(wordt);
+        cursor.moveToFirst();
+        word.setText(cursor.getString(1));
+        roman.setText(cursor.getString(2));
+        urdu.setText(cursor.getString(3));
     }
 
     @Override

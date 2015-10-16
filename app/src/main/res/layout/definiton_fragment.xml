@@ -14,100 +14,113 @@
         android:layout_margin="5dp"
         android:padding="20dp">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
-            <RelativeLayout
+            android:layout_height="match_parent">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="WORD"
+                        android:textColor="@android:color/black"
+                        android:textSize="25dp"
+                        android:textStyle="bold"
+                        android:padding="1dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/defineword" />
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/definetts"
+                        android:src="@android:drawable/ic_lock_silent_mode_off"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true" />
+
+                </RelativeLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/definitionholder"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="URDU"
+                        android:textColor="#666666"
+                        android:textSize="20dp"
+                        android:padding="1dp"
+                        android:textStyle="bold"
+                        android:layout_margin="2dp"
+                        android:id="@+id/defineurdu" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ROMAN"
+                        android:textColor="#14ac54"
+                        android:textSize="20dp"
+                        android:padding="1dp"
+                        android:textStyle="bold"
+                        android:layout_margin="2dp"
+                        android:id="@+id/defineroman" />
 
-                    android:text="WORD"
-                    android:textColor="@android:color/black"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
+
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+
+                    android:background="@android:color/black"
                     android:padding="1dp"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginTop="5dp"
-                    android:id="@+id/defineword" />
+                    android:layout_margin="5dp" />
 
-                <ImageButton
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/definetts"
-                    android:src="@android:drawable/ic_lock_silent_mode_off"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
+                    android:orientation="horizontal"
+                    >
 
-            </RelativeLayout>
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/definefav"
+                        android:src="@android:drawable/btn_star_big_on"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="URDU"
-                android:textColor="#666666"
-                android:textSize="20dp"
-                android:padding="1dp"
-                android:textStyle="bold"
-                android:layout_margin="2dp"
-                android:id="@+id/defineurdu" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="ROMAN"
-                android:textColor="#14ac54"
-                android:textSize="20dp"
-                android:padding="1dp"
-                android:textStyle="bold"
-                android:layout_margin="2dp"
-                android:id="@+id/defineroman" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-
-                android:background="@android:color/black"
-                android:padding="1dp"
-                android:layout_margin="5dp" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/definefav"
-                    android:src="@android:drawable/btn_star_big_on"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/definefeedback"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:text="Feedback"
-                    android:textColor="@android:color/black" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/definefeedback"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:text="Feedback"
+                        android:textColor="@android:color/black" />
 
 
-            </RelativeLayout>
+                </RelativeLayout>
 
-        </LinearLayout>
+            </LinearLayout>
+
+        </ScrollView>
 
 
         </android.support.v7.widget.CardView>

@@ -15,6 +15,8 @@ import java.util.HashMap;
  * Created by root on 26/9/15.
  */
 public class DBOpenHelper extends SQLiteAssetHelper {
+
+    private final String TAG = "DBOpenHelper" ;
     private static final String DATABASE_NAME = "urdu.db" ;
     private static final int DATABASE_VERSION = 1 ;
     private static final String TABLE_NAME = "urdu" ;
@@ -68,7 +70,7 @@ public class DBOpenHelper extends SQLiteAssetHelper {
         return result ;
     }
 
-    public Cursor getWord(String query){
+    public Cursor getAllWord(String query){
         String sql = "select "+FIELD_WORD+", _id from "+TABLE_NAME+" where "+FIELD_WORD+" like '"+query+"%'";
         Cursor result = getReadableDatabase().rawQuery(sql, null);
         return result ;
@@ -82,13 +84,19 @@ public class DBOpenHelper extends SQLiteAssetHelper {
     }
 
     public Cursor getDetail(String word){
-
         String sql = "select * from urdu where word = '"+word+"'" ;
         Log.e("Database",sql);
         Cursor result = getReadableDatabase().rawQuery(sql,null);
-
         return result ;
+    }
 
+    public String getWord(String wordid){
+        String sql = "select word from urdu where _id = '"+wordid+"'" ;
+        Log.e(TAG,sql);
+        Cursor result = getReadableDatabase().rawQuery(sql,null);
+        result.moveToFirst();
+        String word = result.getString(0);
+        return word;
     }
 
 

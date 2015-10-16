@@ -18,17 +18,20 @@ import android.view.View;
 import android.widget.TextView;
 
 import seatech.alam.urdudictionary.adapters.ViewPagerAdapter;
+import seatech.alam.urdudictionary.fragments.Home;
 import seatech.alam.urdudictionary.util.DBOpenHelper;
 
 public class MainActivity extends AppCompatActivity {
 
+    final String TAG = "MainActivity" ;
     public ViewPager viewPager ;
     public ViewPagerAdapter pagerAdapter;
+    public DBOpenHelper dbOpenHelper ;
     TabLayout tabLayout ;
     SearchView searchView;
 
     public String wotd="alamo";
-    public String word=wotd;
+    public String word= wotd ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +43,15 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),this);
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
+        dbOpenHelper = new DBOpenHelper(this) ;
         // Get the intent, verify the action and get the query
         handleIntent(getIntent());
 
     }
 
     private void doMySearch(String query){
+        Home homeFragment = (Home) pagerAdapter.getItem(0);
+        homeFragment.setSuggestion(query);
 
     }
     private void doMyView(String query){
@@ -67,18 +72,21 @@ public class MainActivity extends AppCompatActivity {
             searchView.clearFocus();
             doMySearch(query);
         } else if(Intent.ACTION_VIEW.equals(intent.getAction())){
+            Log.e(TAG,"Intent  Action View ");
             Uri data = intent.getData() ;
             try{
-                String word = data.getLastPathSegment();
+                String wordid = data.getLastPathSegment();
+                Log.e(TAG, "Action from toolbar with wid = "+wordid);
+                word = dbOpenHelper.getWord(wordid);
                 searchView.setQuery(word,false);
                 searchView.clearFocus();
                 doMyView(word);
             }catch (NullPointerException npe){
-                word = intent.getStringExtra("WORD");
+                word = intent.getStringExtra("word");
+                Log.e(TAG, "Action from searchview with word = "+word);
                 doMyView(word);
             }
             viewPager.setCurrentItem(1, true);
-
         }
     }
 

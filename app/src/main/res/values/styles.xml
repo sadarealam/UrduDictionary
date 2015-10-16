@@ -33,6 +33,13 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="SearchTheme" parent="Seatech.Rehana.Theme">
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <!--color of the menu overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@android:color/darker_gray</item>-->
+
+    </style>
+
 
 
 

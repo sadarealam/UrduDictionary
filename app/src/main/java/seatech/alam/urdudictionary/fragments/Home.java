@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
@@ -17,6 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import seatech.alam.urdudictionary.MainActivity;
 import seatech.alam.urdudictionary.R;
@@ -27,16 +30,18 @@ import seatech.alam.urdudictionary.util.DBOpenHelper;
  */
 public class Home extends Fragment {
 
-    SearchView searchView;
-    SearchManager searchManager;
-    MainActivity activity;
-    DBOpenHelper dbOpenHelper ;
+    final String TAG = "Home Frag" ;
 
-    private static final String[] SUGGESTIONS = {
-            "Bauru", "Sao Paulo", "Rio de Janeiro",
-            "Bahia", "Mato Grosso", "Minas Gerais",
-            "Tocantins", "Rio Grande do Sul"
-    };
+    SearchView searchView;
+    LinearLayout suggestionLayout ;
+
+
+    MainActivity activity;
+
+    DBOpenHelper dbOpenHelper ;
+    String word ;
+
+
     private SimpleCursorAdapter mAdapter;
 
 
@@ -52,7 +57,7 @@ public class Home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment,container,false) ;
         searchView = (SearchView) view.findViewById(R.id.searchView) ;
-        searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        suggestionLayout = (LinearLayout) view.findViewById(R.id.suggestionCardLayout);
         searchView.setSuggestionsAdapter(mAdapter);
         searchView.setIconifiedByDefault(false);
         searchView.setSubmitButtonEnabled(true);
@@ -61,7 +66,8 @@ public class Home extends Fragment {
             @Override
             public boolean onSuggestionClick(int position) {
                 // Your code here
-                searchView.setQuery(mAdapter.getCursor().getString(0), false);
+                word = mAdapter.getCursor().getString(0);
+                searchView.setQuery(word, false);
                 getDifinition();
                 return true;
             }
@@ -76,7 +82,8 @@ public class Home extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 //when user submit query
-                return false;
+                setSuggestion(s);
+                return true;
             }
 
             @Override
@@ -111,23 +118,31 @@ public class Home extends Fragment {
 
     }
 
-    // You must implements your logic to get data using OrmLite
     private void populateAdapter(String query) {
-       /* final MatrixCursor c = new MatrixCursor(new String[]{ BaseColumns._ID, "cityName" });
-        for (int i=0; i<SUGGESTIONS.length; i++) {
-            if (SUGGESTIONS[i].toLowerCase().startsWith(query.toLowerCase()))
-                c.addRow(new Object[] {i, SUGGESTIONS[i]});
-        }*/
-        Cursor c = dbOpenHelper.getWord(query);
+        Cursor c = dbOpenHelper.getAllWord(query);
         mAdapter.changeCursor(c);
     }
 
     private void getDifinition(){
-
         Intent intent = new Intent(activity,MainActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
-        intent.putExtra("word","love");
+        intent.putExtra("word",word );
         activity.startActivity(intent);
+    }
+
+    public void setSuggestion(String query){
+        Log.e(TAG, "Show suggestion for " + query);
+        Cursor cursor = dbOpenHelper.getAllWord(query);
+        cursor.moveToFirst();
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        while(cursor.moveToNext()){
+            TextView tv = new TextView(activity);
+            tv.setLayoutParams(layoutParams);
+            tv.setText(cursor.getString(0));
+            tv.setTextColor(Color.BLACK);
+            suggestionLayout.addView(tv);
+        }
     }
 
 
