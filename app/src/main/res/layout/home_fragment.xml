@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -8,9 +8,7 @@
     android:background="#a90000"
     android:fillViewport="false">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -49,6 +47,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/suggestionLabel"
                     android:text="Search Result for aal"
                     android:textColor="@android:color/black" />
 
@@ -57,12 +56,13 @@
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray"
                     />
+              <ListView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/suggestionList"
+                  >
 
-
-
-
-
-
+              </ListView>
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
@@ -80,7 +80,6 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:padding="10dp">
 
             <TextView
@@ -88,7 +87,6 @@
                 android:layout_height="wrap_content"
                 android:text="Word of the Day"
                 android:textSize="25dp"
-
                 android:textColor="#3399CC"
                 android:id="@+id/wotdtext" />
 
@@ -140,7 +138,7 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/view"
+            android:id="@+id/pwotdcard"
             android:layout_below="@id/wotdcard"
 
             android:layout_marginTop="5dp"
@@ -153,7 +151,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
-              android:id="@+id/pwotdcard"
+              android:id="@+id/pwotdcardlayout"
               android:padding="10dp"
               android:background="#ffffff">
               <TextView
@@ -168,8 +166,6 @@
                   android:layout_width="match_parent"
                   android:layout_height="1dp"
                   android:background="@android:color/darker_gray"
-
-
                   />
 
               <TextView
@@ -224,6 +220,6 @@
 
         </android.support.v7.widget.CardView>
 
-    </RelativeLayout>
 
-</ScrollView>
+
+</RelativeLayout>

@@ -21,12 +21,12 @@ import seatech.alam.urdudictionary.adapters.ViewPagerAdapter;
 import seatech.alam.urdudictionary.fragments.Home;
 import seatech.alam.urdudictionary.util.DBOpenHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     final String TAG = "MainActivity" ;
     public ViewPager viewPager ;
     public ViewPagerAdapter pagerAdapter;
-    public DBOpenHelper dbOpenHelper ;
+    public static DBOpenHelper dbOpenHelper ;
     TabLayout tabLayout ;
     SearchView searchView;
 
@@ -47,12 +47,17 @@ public class MainActivity extends AppCompatActivity {
         // Get the intent, verify the action and get the query
         handleIntent(getIntent());
 
+        tabLayout.setOnTabSelectedListener(this);
     }
 
     private void doMySearch(String query){
-        Home homeFragment = (Home) pagerAdapter.getItem(0);
-        homeFragment.setSuggestion(query);
-
+        //Home homeFragment = (Home) pagerAdapter.getItem(0);
+        Home homeFragment = (Home) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":0");
+        if(homeFragment != null) {
+            homeFragment.setSuggestion(query);
+        }else {
+            Log.e(TAG,"Home fragments is null");
+        }
     }
     private void doMyView(String query){
 
@@ -126,5 +131,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+
+        Log.e(TAG,"Tab Selected");
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 }

@@ -13,12 +13,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import seatech.alam.urdudictionary.MainActivity;
@@ -32,9 +34,15 @@ public class Home extends Fragment {
 
     final String TAG = "Home Frag" ;
 
+    //View's reference from java code
     SearchView searchView;
-    LinearLayout suggestionLayout ;
+    ListView suggestionList ;
+    TextView suggestionLabel ;
+    CardView suggestionCard ;
+    CardView pwotdCard ;
 
+
+    int temp =0 ;
 
     MainActivity activity;
 
@@ -56,8 +64,12 @@ public class Home extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment,container,false) ;
+        //initializing the views
         searchView = (SearchView) view.findViewById(R.id.searchView) ;
-        suggestionLayout = (LinearLayout) view.findViewById(R.id.suggestionCardLayout);
+        suggestionCard = (CardView) view.findViewById(R.id.suggestionCard);
+        pwotdCard = (CardView) view.findViewById(R.id.pwotdcard);
+        suggestionList = (ListView) view.findViewById(R.id.suggestionList);
+        suggestionLabel = (TextView) view.findViewById(R.id.suggestionLabel) ;
         searchView.setSuggestionsAdapter(mAdapter);
         searchView.setIconifiedByDefault(false);
         searchView.setSubmitButtonEnabled(true);
@@ -83,16 +95,28 @@ public class Home extends Fragment {
             public boolean onQueryTextSubmit(String s) {
                 //when user submit query
                 setSuggestion(s);
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                populateAdapter(s);
-                return false;
+                if(s.length()<=2){
+                    //Safeguard for showing suggestion when query length is too small .
+                    return false ;
+                }
+                if(temp-s.length() <=0 ){
+                    populateAdapter(s);
+                }else {
+                    mAdapter.changeCursor(null);
+                }
+                temp = s.length();
+                return true;
             }
         });
 
+        //Hiding the view that are not require initially
+        suggestionCard.setVisibility(View.GONE);
+        pwotdCard.setVisibility(View.GONE);
         return view ;
     }
 
@@ -109,18 +133,20 @@ public class Home extends Fragment {
                 from,
                 to,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        dbOpenHelper = new DBOpenHelper(activity);
+        dbOpenHelper = activity.dbOpenHelper ;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
-    }
 
-    private void populateAdapter(String query) {
+    private  boolean populateAdapter(String query) {
         Cursor c = dbOpenHelper.getAllWord(query);
-        mAdapter.changeCursor(c);
+        try {
+            mAdapter.changeCursor(c);
+        } catch (Exception e){
+            Log.e(TAG,e.getMessage());
+            return false ;
+        }
+        return true ;
     }
 
     private void getDifinition(){
@@ -130,18 +156,37 @@ public class Home extends Fragment {
         activity.startActivity(intent);
     }
 
-    public void setSuggestion(String query){
-        Log.e(TAG, "Show suggestion for " + query);
-        Cursor cursor = dbOpenHelper.getAllWord(query);
-        cursor.moveToFirst();
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        while(cursor.moveToNext()){
-            TextView tv = new TextView(activity);
-            tv.setLayoutParams(layoutParams);
-            tv.setText(cursor.getString(0));
-            tv.setTextColor(Color.BLACK);
-            suggestionLayout.addView(tv);
+    public void setSuggestion(String query){
+
+        if(dbOpenHelper == null ){
+            dbOpenHelper= activity.dbOpenHelper ;
+        }
+
+        Cursor detail = dbOpenHelper.getDetail(query);
+        if(detail.moveToFirst()){
+            //query is a word
+            Log.e(TAG,"query is a word");
+            word = query ;
+            getDifinition();
+        }else {
+            detail.close();
+            Cursor cursor = dbOpenHelper.getAllWord(query);
+            cursor.moveToFirst();
+
+            final String[] from = new String[]{"word"};
+            final int[] to = new int[]{android.R.id.text1};
+            SimpleCursorAdapter sAdapter = new SimpleCursorAdapter(getActivity(),
+                    R.layout.simple_list_item,
+                    null,
+                    from,
+                    to);
+            suggestionLabel.setText("Search Result for " + query);
+            sAdapter.changeCursor(cursor);
+            suggestionList.setAdapter(sAdapter);
+
+            suggestionCard.setVisibility(View.VISIBLE);
+            suggestionCard.requestFocus();
         }
     }
 

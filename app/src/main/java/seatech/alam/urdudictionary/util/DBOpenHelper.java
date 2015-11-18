@@ -77,7 +77,6 @@ public class DBOpenHelper extends SQLiteAssetHelper {
     }
 
     public Cursor getDetail(int id){
-
         String sql = "select * from urdu where _id = "+id ;
         Cursor result = getReadableDatabase().rawQuery(sql,null);
         return result ;
