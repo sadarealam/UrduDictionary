@@ -3,6 +3,7 @@ package seatech.alam.urdudictionary;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -16,16 +17,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import seatech.alam.urdudictionary.adapters.ViewPagerAdapter;
-import seatech.alam.urdudictionary.fragments.Definition;
 import seatech.alam.urdudictionary.fragments.Home;
 import seatech.alam.urdudictionary.util.DBOpenHelper;
 
-public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     final String TAG = "MainActivity" ;
     public ViewPager viewPager ;
     public ViewPagerAdapter pagerAdapter;
-    public static DBOpenHelper dbOpenHelper ;
+    public DBOpenHelper dbOpenHelper ;
     TabLayout tabLayout ;
     SearchView searchView;
 
@@ -46,49 +46,24 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         // Get the intent, verify the action and get the query
         handleIntent(getIntent());
 
-        tabLayout.setOnTabSelectedListener(this);
     }
 
-    /**
-     * Pass the String query to Home Fragment to set the suggested list of word in suggestion card of Home fragment .
-     * @param query  for which suggestion will be provided .
-     */
-    private void doSearch(String query){
-        Home homeFragment = (Home) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":0");
-        if(homeFragment != null) {
-            homeFragment.setSuggestion(query);
+    public void searchQuery(String query){
+        Log.e(TAG,"Main search Query ");
+        Cursor cursor = dbOpenHelper.getDetail(query);
+        if(cursor.moveToFirst()){
+
+            word = query ;
+
+            viewPager.setCurrentItem(1,true);
         }else {
-            Log.e(TAG,"Home fragments is null");
+            Home homeFragment = (Home) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.viewpager+":0");
+            if(homeFragment!=null){
+                homeFragment.setSuggestion(query);
+            }
         }
     }
 
-    /**
-     * Set the word for definition and change the current page to definition page .
-     * Also add the entry into history list .
-     * @param word
-     */
-    public void getDefinitionPage(String word){
-        Log.e(TAG,word + " received in getDefinitionPage");
-        this.word = word ;
-        viewPager.setCurrentItem(1, true);
-    }
-
-    /**
-     * Set the word for definition and change the current page to definition page .
-     * Also add the entry into history list .
-     * @param word
-     */
-    public void getDefinition(String word){
-        Log.e(TAG,word + " received ");
-        this.word = word ;
-        Definition homeFragment = (Definition) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":1");
-        if(homeFragment != null) {
-            homeFragment.onResume() ;
-        }else {
-            Log.e(TAG,"Home fragments is null");
-        }
-        viewPager.setCurrentItem(1, true);
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -96,35 +71,30 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         handleIntent(intent);
     }
 
-    /**
-     *
-     * Handle the intent for the Main Activity . There may be only two type of intent that it can handle .
-     *  1. ACTION_SEARCH (coming with query for word ).
-     *  2. ACTION_VIEW(coming with word for definition) .
-     * @param intent
-     */
     private void handleIntent(Intent intent){
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            Log.e(TAG, "Action Search ");
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchView.setQuery(query,false);
             searchView.clearFocus();
-            doSearch(query);
+            searchQuery(query);
         } else if(Intent.ACTION_VIEW.equals(intent.getAction())){
             Log.e(TAG,"Intent  Action View ");
             Uri data = intent.getData() ;
             try{
                 String wordid = data.getLastPathSegment();
                 Log.e(TAG, "Action from toolbar with wid = "+wordid);
-                String tempword = dbOpenHelper.getWord(wordid);
-                searchView.setQuery(tempword,false);
+                //change word value so that definition can be find for that word;
+                word = dbOpenHelper.getWord(wordid);
+                searchView.setQuery(word,false);
                 searchView.clearFocus();
-                getDefinitionPage(tempword);
+                //getMeaning(word);
             }catch (NullPointerException npe){
-               String trmpword = intent.getStringExtra("word");
-                Log.e(TAG, "Action from searchview with word = "+trmpword);
-                getDefinitionPage(trmpword);
+                word = intent.getStringExtra("word");
+                Log.e(TAG, "Action from searchview with word = "+word);
+                //getMeaning(word);
             }
-
+            viewPager.setCurrentItem(1, true);
         }
     }
 
@@ -164,22 +134,5 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-
-        Log.e(TAG,"Tab Selected");
-        viewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
     }
 }
