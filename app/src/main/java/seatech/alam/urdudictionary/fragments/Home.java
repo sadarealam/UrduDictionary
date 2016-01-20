@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ import seatech.alam.urdudictionary.util.DBOpenHelper;
 /**
  * Created by root on 27/9/15.
  */
-public class Home extends Fragment {
+public class Home extends Fragment implements AdapterView.OnItemClickListener {
 
     final String TAG = "Home Frag" ;
 
@@ -80,7 +81,8 @@ public class Home extends Fragment {
                 // Your code here
                 word = mAdapter.getCursor().getString(0);
                 searchView.setQuery(word, false);
-                getDifinition();
+                Log.e(TAG,word + " clicked and passed to activity ");
+                activity.getDefinition(word);
                 return true;
             }
 
@@ -150,10 +152,7 @@ public class Home extends Fragment {
     }
 
     private void getDifinition(){
-        Intent intent = new Intent(activity,MainActivity.class);
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.putExtra("word",word );
-        activity.startActivity(intent);
+       activity.getDefinitionPage(word);
     }
 
 
@@ -183,6 +182,7 @@ public class Home extends Fragment {
                     to);
             suggestionLabel.setText("Search Result for " + query);
             sAdapter.changeCursor(cursor);
+            suggestionList.setOnItemClickListener(this);
             suggestionList.setAdapter(sAdapter);
 
             suggestionCard.setVisibility(View.VISIBLE);
@@ -191,4 +191,11 @@ public class Home extends Fragment {
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+       Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
+        String selectedword = cursor.getString(0);
+        word = selectedword ;
+        getDifinition();
+    }
 }

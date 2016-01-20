@@ -14,10 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import seatech.alam.urdudictionary.adapters.ViewPagerAdapter;
+import seatech.alam.urdudictionary.fragments.Definition;
 import seatech.alam.urdudictionary.fragments.Home;
 import seatech.alam.urdudictionary.util.DBOpenHelper;
 
@@ -50,8 +49,11 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         tabLayout.setOnTabSelectedListener(this);
     }
 
-    private void doMySearch(String query){
-        //Home homeFragment = (Home) pagerAdapter.getItem(0);
+    /**
+     * Pass the String query to Home Fragment to set the suggested list of word in suggestion card of Home fragment .
+     * @param query  for which suggestion will be provided .
+     */
+    private void doSearch(String query){
         Home homeFragment = (Home) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":0");
         if(homeFragment != null) {
             homeFragment.setSuggestion(query);
@@ -59,9 +61,33 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
             Log.e(TAG,"Home fragments is null");
         }
     }
-    private void doMyView(String query){
 
+    /**
+     * Set the word for definition and change the current page to definition page .
+     * Also add the entry into history list .
+     * @param word
+     */
+    public void getDefinitionPage(String word){
+        Log.e(TAG,word + " received in getDefinitionPage");
+        this.word = word ;
+        viewPager.setCurrentItem(1, true);
+    }
 
+    /**
+     * Set the word for definition and change the current page to definition page .
+     * Also add the entry into history list .
+     * @param word
+     */
+    public void getDefinition(String word){
+        Log.e(TAG,word + " received ");
+        this.word = word ;
+        Definition homeFragment = (Definition) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":1");
+        if(homeFragment != null) {
+            homeFragment.onResume() ;
+        }else {
+            Log.e(TAG,"Home fragments is null");
+        }
+        viewPager.setCurrentItem(1, true);
     }
 
     @Override
@@ -70,28 +96,35 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         handleIntent(intent);
     }
 
+    /**
+     *
+     * Handle the intent for the Main Activity . There may be only two type of intent that it can handle .
+     *  1. ACTION_SEARCH (coming with query for word ).
+     *  2. ACTION_VIEW(coming with word for definition) .
+     * @param intent
+     */
     private void handleIntent(Intent intent){
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchView.setQuery(query,false);
             searchView.clearFocus();
-            doMySearch(query);
+            doSearch(query);
         } else if(Intent.ACTION_VIEW.equals(intent.getAction())){
             Log.e(TAG,"Intent  Action View ");
             Uri data = intent.getData() ;
             try{
                 String wordid = data.getLastPathSegment();
                 Log.e(TAG, "Action from toolbar with wid = "+wordid);
-                word = dbOpenHelper.getWord(wordid);
-                searchView.setQuery(word,false);
+                String tempword = dbOpenHelper.getWord(wordid);
+                searchView.setQuery(tempword,false);
                 searchView.clearFocus();
-                doMyView(word);
+                getDefinitionPage(tempword);
             }catch (NullPointerException npe){
-                word = intent.getStringExtra("word");
-                Log.e(TAG, "Action from searchview with word = "+word);
-                doMyView(word);
+               String trmpword = intent.getStringExtra("word");
+                Log.e(TAG, "Action from searchview with word = "+trmpword);
+                getDefinitionPage(trmpword);
             }
-            viewPager.setCurrentItem(1, true);
+
         }
     }
 
