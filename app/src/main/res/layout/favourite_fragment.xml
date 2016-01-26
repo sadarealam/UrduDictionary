@@ -2,14 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#a90000">
+    android:background="#a90000"
+    android:padding="10dp">
 
-    <TextView
+
+
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Favourite"
-        android:id="@+id/textView"
-        android:gravity="center"
-        android:layout_gravity="center" />
+        android:layout_height="wrap_content"
+        android:id="@+id/favouriteCard">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No Favourite so far"
+            android:id="@+id/noFavouritetv"
+            android:gravity="center"
+            android:textColor="#f90101"
+            android:textSize="25dp" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/favouriteList">
+
+
+        </ListView>
+
+    </android.support.v7.widget.CardView>
+
+
 
 </LinearLayout>

@@ -66,9 +66,10 @@ public class Home extends Fragment {
             @Override
             public boolean onSuggestionClick(int position) {
                 // Your code here
-                word = mAdapter.getCursor().getString(0);
+                String word = mAdapter.getCursor().getString(0);
                 searchView.setQuery(word, false);
-                getDifinition();
+                activity.setGData(word);
+                activity.startDefinition();
                 return true;
             }
 
@@ -84,7 +85,7 @@ public class Home extends Fragment {
                 //when user submit query
 
                 searchView.clearFocus();
-                activity.searchQuery(s);
+                searchQuery(s);
                 return true;
             }
 
@@ -125,13 +126,6 @@ public class Home extends Fragment {
         mAdapter.changeCursor(c);
     }
 
-    private void getDifinition(){
-        Intent intent = new Intent(activity,MainActivity.class);
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.putExtra("word",word );
-        activity.startActivity(intent);
-    }
-
     public void setSuggestion(String query){
         Log.e(TAG, "Show suggestion for " + query);
         suggestionCard.setVisibility(View.VISIBLE);
@@ -147,7 +141,27 @@ public class Home extends Fragment {
             tv.setTextColor(Color.BLACK);
             suggestionLayout.addView(tv);
         }
+        Log.e(TAG,"suggestion is provided");
     }
 
+    /**
+     * Call when a user search for a query rather than providing a word .
+     * This method either check if provided query is a valid word and do the corresponding or pass the query to Home fragment for suggestion list .
+     * @param query
+     */
+    public void searchQuery(String query){
+        Log.e(TAG, "Main search Query ");
+        Cursor cursor = dbOpenHelper.getDetail(query);
+        if(cursor.moveToFirst()){
+            String word = query ;
+            activity.setGData(query);
+            activity.startDefinition();
+        }else {
+             this.setSuggestion(query);
+            }
+    }
 
 }
+
+
+

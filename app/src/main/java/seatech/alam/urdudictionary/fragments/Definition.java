@@ -1,7 +1,6 @@
 package seatech.alam.urdudictionary.fragments;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,7 +14,7 @@ import android.widget.TextView;
 
 import seatech.alam.urdudictionary.MainActivity;
 import seatech.alam.urdudictionary.R;
-import seatech.alam.urdudictionary.util.DBOpenHelper;
+import seatech.alam.urdudictionary.util.Globals;
 
 /**
  * Created by root on 27/9/15.
@@ -27,8 +26,6 @@ public class Definition extends Fragment {
     TextView wordtv;
     TextView urdutv;
     TextView romantv;
-    String wordt;
-    DBOpenHelper dbOpenHelper;
     LinearLayout definitionHolder;
 
     @Override
@@ -42,8 +39,7 @@ public class Definition extends Fragment {
     public void onStart() {
         super.onStart();
         Log.e(TAG, "onStart() called ");
-        wordt=activity.word;
-        setDefinition(wordt);
+        //setDefinition();
 
     }
 
@@ -51,17 +47,13 @@ public class Definition extends Fragment {
     public void onResume() {
         super.onResume();
         Log.e(TAG, "onResume() called ");
-        wordt=activity.word;
         definitionHolder.removeAllViews();
-        setDefinition(wordt);
+        setDefinition();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbOpenHelper = new DBOpenHelper(activity);
-        wordt=activity.word;
-        Log.e("Definition", wordt);
 
     }
 
@@ -77,19 +69,17 @@ public class Definition extends Fragment {
         urdutv.setVisibility(View.GONE);
         romantv.setVisibility(View.GONE);
 
-        setDefinition(wordt);
+        setDefinition();
 
         return view;
 
     }
 
 
-    private void setDefinition(String word){
-        Cursor cursor = dbOpenHelper.getDetail(word);
-        cursor.moveToFirst();
-
-        String urdu = cursor.getString(3);
-        String roman = cursor.getString(2);
+    private void setDefinition(){
+        String word = Globals.current_word ;
+        String urdu = Globals.urdu ;
+        String roman = Globals.roman ;
 
         String[] urdulist= urdu.split("\n");
         String[] romanlist = roman.split("\n");

@@ -16,6 +16,8 @@ import java.util.HashMap;
  */
 public class DBOpenHelper extends SQLiteAssetHelper {
 
+    //TODO Check for sql injection code in all query ;
+
     private final String TAG = "DBOpenHelper" ;
     private static final String DATABASE_NAME = "urdu.db" ;
     private static final int DATABASE_VERSION = 1 ;
