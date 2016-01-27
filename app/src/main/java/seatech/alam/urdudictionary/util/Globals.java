@@ -10,5 +10,9 @@ public class Globals {
     public static String word_of_the_day ;
     public static String roman_wotd ;
     public static String urdu_wotd;
+    public static String query = null ;
+    public static final int TYPE_WOTD = 1 ;
+    public static final int TYPE_HISTORY = 2 ;
+    public static final int TYPE_FAB = 3 ;
 
 }

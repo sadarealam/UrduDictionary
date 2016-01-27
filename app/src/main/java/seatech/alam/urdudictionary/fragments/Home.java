@@ -1,15 +1,9 @@
 package seatech.alam.urdudictionary.fragments;
 
 import android.app.Activity;
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -19,21 +13,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import seatech.alam.urdudictionary.MainActivity;
 import seatech.alam.urdudictionary.R;
 import seatech.alam.urdudictionary.util.DBOpenHelper;
+import seatech.alam.urdudictionary.util.Globals;
 
 /**
  * Created by root on 27/9/15.
  */
-public class Home extends Fragment {
+public class Home extends Fragment implements AdapterView.OnItemClickListener , View.OnClickListener{
 
     final String TAG = "Home Frag" ;
     SearchView searchView ;
-    LinearLayout suggestionLayout ;
+    ListView suggestionListView;
+    TextView suggestionCardLabel ;
+    ImageView suggestionCardCancel ;
     MainActivity activity;
     DBOpenHelper dbOpenHelper ;
     String word ;
@@ -41,6 +41,19 @@ public class Home extends Fragment {
 
     private SimpleCursorAdapter mAdapter;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(TAG,"HOme onResume");
+        if(Globals.query != null ) setSuggestion(Globals.query);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.e(TAG,"Home onStart");
+
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -49,7 +62,18 @@ public class Home extends Fragment {
         this.activity = (MainActivity) activity ;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e(TAG,"Home onPause");
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.e(TAG, "HOME onStop");
+        Globals.query = null ;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +81,11 @@ public class Home extends Fragment {
         searchView = (SearchView) view.findViewById(R.id.searchView) ;
         suggestionCard = (CardView) view.findViewById(R.id.suggestionCard);
         suggestionCard.setVisibility(View.GONE);
-        suggestionLayout = (LinearLayout) view.findViewById(R.id.suggestionCardLayout);
+        suggestionCardLabel = (TextView) view.findViewById(R.id.suggestionCardLabel) ;
+        suggestionListView = (ListView) view.findViewById(R.id.suggestionListView);
+        suggestionListView.setOnItemClickListener(this);
+        suggestionCardCancel = (ImageView) view.findViewById(R.id.suggestionCardCancel);
+        suggestionCardCancel.setOnClickListener(this);
         searchView.setSuggestionsAdapter(mAdapter);
         searchView.setIconifiedByDefault(false);
         searchView.setSubmitButtonEnabled(true);
@@ -129,19 +157,12 @@ public class Home extends Fragment {
     public void setSuggestion(String query){
         Log.e(TAG, "Show suggestion for " + query);
         suggestionCard.setVisibility(View.VISIBLE);
-        suggestionLayout.removeAllViews();
+        suggestionCardLabel.setText("Search Result for '"+query+"'");
         Cursor cursor = dbOpenHelper.getAllWord(query);
         cursor.moveToFirst();
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        while(cursor.moveToNext()){
-            TextView tv = new TextView(activity);
-            tv.setLayoutParams(layoutParams);
-            tv.setText(cursor.getString(0));
-            tv.setTextColor(Color.BLACK);
-            suggestionLayout.addView(tv);
-        }
-        Log.e(TAG,"suggestion is provided");
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),android.R.layout.simple_list_item_1,cursor, new String[]{"word"},new int[]{android.R.id.text1});
+        suggestionListView.setAdapter(adapter);
+        Log.e(TAG, "suggestion is provided");
     }
 
     /**
@@ -161,6 +182,19 @@ public class Home extends Fragment {
             }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Cursor cursor = (Cursor) suggestionListView.getItemAtPosition(position);
+        String word = cursor.getString(0);
+        Log.e(TAG,word.toString());
+        activity.setGData(word);
+        activity.startDefinition();
+    }
+
+    @Override
+    public void onClick(View v) {
+        suggestionCard.setVisibility(View.GONE);
+    }
 }
 
 
