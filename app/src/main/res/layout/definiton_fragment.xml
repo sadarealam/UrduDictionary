@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#a90000">
+    >
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -14,9 +14,7 @@
         android:layout_margin="5dp"
         android:padding="20dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,10 +24,12 @@
                 android:paddingRight="10dp"
                 android:paddingTop="5dp"
                 android:id="@+id/definecardupper"
-                android:paddingBottom="5dp">
+                android:paddingBottom="5dp"
+               >
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     >
 
                     <TextView
@@ -50,89 +50,61 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/definetts"
                         android:src="@android:drawable/ic_lock_silent_mode_off"
+                        android:onClick="speakOut"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true" />
 
                 </RelativeLayout>
 
-                <ScrollView
+                <ListView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/definitionList"
+                    android:layout_weight="5.65">
 
-                    <LinearLayout
+                </ListView>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    >
+
+                    <View
                         android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/black"
+                        android:layout_alignParentTop="true"
+                        />
+
+
+
+                    <!--<TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:id="@+id/definitionholder">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="URDU"
-                            android:textColor="#666666"
-                            android:textSize="20dp"
-                            android:padding="1dp"
-                            android:textStyle="bold"
-                            android:layout_margin="2dp"
-                            android:id="@+id/defineurdu" />
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="ROMAN"
-                            android:textColor="#14ac54"
-                            android:textSize="20dp"
-                            android:padding="1dp"
-                            android:textStyle="bold"
-                            android:layout_margin="2dp"
-                            android:id="@+id/defineroman" />
+                        android:id="@+id/definefeedback"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:text="Feedback"
+                        android:textColor="@android:color/black" />-->
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/definefav"
+                        android:src="@android:drawable/btn_star"
+                        android:layout_alignParentRight="true"
+                        android:onClick="onFavorite"
+                        android:layout_alignParentEnd="true" />
 
-                    </LinearLayout>
-
-                </ScrollView>
-
+                </RelativeLayout>
 
 
             </LinearLayout>
 
-            <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-                android:layout_below="@+id/definecardupper"
-            >
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/black"
-                android:layout_alignParentTop="true"
-                />
-
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/definefeedback"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:text="Feedback"
-                android:textColor="@android:color/black" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/definefav"
-                    android:src="@drawable/ic_star_border_black_48dp"
-                    android:layout_alignTop="@id/definefeedback"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
-
-        </RelativeLayout>
-
-        </RelativeLayout>
 
         </android.support.v7.widget.CardView>
 

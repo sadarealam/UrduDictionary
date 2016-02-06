@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,21 +17,32 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Random;
 
+import seatech.alam.urdudictionary.adapters.CursorAdapterPlus;
 import seatech.alam.urdudictionary.adapters.ViewPagerAdapter;
 import seatech.alam.urdudictionary.fragments.Definition;
+import seatech.alam.urdudictionary.fragments.Favourite;
+import seatech.alam.urdudictionary.fragments.History;
 import seatech.alam.urdudictionary.fragments.Home;
 import seatech.alam.urdudictionary.util.DBOpenHelper;
 import seatech.alam.urdudictionary.util.Globals;
 import seatech.alam.urdudictionary.util.UserData;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     final String TAG = "MainActivity";
     public ViewPager viewPager;
@@ -38,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
     SearchView searchView;
     public UserData userData ;
-
+    private TextToSpeech textToSpeech ;
 
 
     @Override
@@ -46,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupToolbar();
-        Globals.word_of_the_day = "alamo";
-
+        Log.e(TAG,"onCreate called");
+        textToSpeech = new TextToSpeech(this ,this) ;
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
@@ -60,22 +73,71 @@ public class MainActivity extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        getWotd() ;
+        //Globals.word_of_the_day = "alamo" ;
         setGData(Globals.word_of_the_day);
-        setWotd();
+        //setWotd();
         // Get the intent, verify the action and get the query
         handleIntent(getIntent());
 
 
     }
 
-    public void setWotd(){
+    public void getWotd()  {
         try {
-            Cursor cursor = userData.getAllValues(Globals.TYPE_WOTD);
+            Cursor cursor = userData.getAllValues(Globals.TYPE_WOTD) ;
             if(cursor.moveToFirst()){
-
+                String stamp = cursor.getString(1) ;
+                PrettyTime p = new PrettyTime();
+                String age = p.format(new Date(Long.parseLong(stamp)));
+                if(age.contains("day")) {
+                    generateWotd();
+                } else {
+                    String word = cursor.getString(3) ;
+                    cursor.close();
+                    setWotdData(word);
+                }
+            } else {
+                generateWotd();
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Generate the word of the day based on some logic and then insert the value in the userdata .
+     */
+    public void generateWotd(){
+        Random random = new Random();
+        boolean ok = true ;
+
+        while(ok){
+            int ran = random.nextInt(130000) ;
+            Cursor cursor = dbOpenHelper.getDetail(ran);
+            if(cursor.moveToFirst()){
+                String word = cursor.getString(1);
+                try {
+                    if(userData.isPresent(Globals.TYPE_WOTD,word).moveToFirst()) continue;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                String roman = cursor.getString(2) ;
+                String urdu = cursor.getString(3) ;
+                if(word.equalsIgnoreCase(roman.trim())) {
+
+                } else if(roman.equalsIgnoreCase("-")) {
+
+                } else {
+                    ok = false ;
+                    userData.insertValue(Globals.TYPE_WOTD,word);
+                    Globals.word_of_the_day=word ;
+                    Globals.roman_wotd = roman ;
+                    Globals.urdu_wotd = urdu ;
+                    userData.insertValue(Globals.TYPE_HISTORY,word);
+                }
+            }
+
         }
     }
 
@@ -89,11 +151,12 @@ public class MainActivity extends AppCompatActivity {
         Log.e(TAG, "Main search Query ");
         Cursor cursor = dbOpenHelper.getDetail(query);
         if (cursor.moveToFirst()) {
+            Log.e(TAG,"its a word");
             String word = query;
             setGData(word);
             viewPager.setCurrentItem(1, true);
         } else {
-
+            Log.e(TAG,"its a query");
             Globals.query = query ;
             viewPager.setCurrentItem(0,true);
         }
@@ -105,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         if (definitionFragment != null) {
             definitionFragment.onResume();
         }
-        viewPager.setCurrentItem(1, true);
+        viewPager.setCurrentItem(1, false);
     }
 
     /**
@@ -123,6 +186,15 @@ public class MainActivity extends AppCompatActivity {
         cursor.moveToFirst();
         Globals.urdu = cursor.getString(3);
         Globals.roman = cursor.getString(2);
+        cursor.close();
+    }
+
+    public void setWotdData(String word){
+        Cursor cursor = dbOpenHelper.getDetail(word);
+        cursor.moveToFirst();
+        Globals.word_of_the_day = word ;
+        Globals.urdu_wotd = cursor.getString(3) ;
+        Globals.roman_wotd = cursor.getString(2) ;
         cursor.close();
     }
 
@@ -207,19 +279,65 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+    }
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://seatech.alam.urdudictionary/http/host/path")
-        );
+    public void onFavorite(View view){
+        try {
+            Cursor cursor = userData.isPresent(Globals.TYPE_FAB,Globals.current_word) ;
+            if(cursor.moveToFirst()){
+                Toast.makeText(this,"Already Your Favorite ",Toast.LENGTH_LONG).show();
+            } else {
+                userData.insertValue(Globals.TYPE_FAB,Globals.current_word);
+                Favourite favouriteFragment = (Favourite) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":2");
+                if (favouriteFragment != null) {
+                    favouriteFragment.setFavouritData();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void speakOut(View view){
+        textToSpeech.speak(Globals.current_word,0,null) ;
+    }
+
+    /**
+     * delete the row data from the database and update the History and Favorite fragments to show the recent changes in data .
+     * @param view
+     */
+    public void deleteData(View view){
+        Log.e(TAG, "deleteData() pressed");
+        long l = Long.parseLong((String)((TextView)((ViewGroup)view.getParent().getParent()).findViewById(R.id.row_time)).getTag());
+        userData.deleteValues(l) ;
+        Favourite favouriteFragment = (Favourite) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":2");
+        if (favouriteFragment != null) {
+            favouriteFragment.dataSetChanged();
+        }
+        History historyFragment = (History) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":3");
+        if (historyFragment != null) {
+            historyFragment.dataSetChanged();
+        }
+
+    }
+
+    public void wotdClick(View view){
+        Globals.current_word = Globals.word_of_the_day ;
+        Globals.urdu = Globals.urdu_wotd ;
+        Globals.roman = Globals.roman_wotd ;
+        startDefinition();
+    }
+
+    @Override
+    public void onInit(int status) {
+        if(status == 0){
+            status = this.textToSpeech.setLanguage(Locale.US);
+            if ((status == -1) || (status == -2)) {
+                Log.e("Urdu Dictionary","Language not Available");
+            }
+            return;
+        }
+        Toast.makeText(this, "Text to speech is not available in this device", Toast.LENGTH_SHORT).show();
+        Log.e("UrduDictionary", "Could not initialize TextToSpeech.");
     }
 }

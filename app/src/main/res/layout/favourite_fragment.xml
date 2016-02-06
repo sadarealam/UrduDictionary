@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#a90000"
+
+    android:id="@+id/favouriteLayout"
     android:padding="10dp">
 
 
@@ -10,7 +11,7 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/favouriteCard">
+        android:id="@+id/nofavouriteCard">
 
         <TextView
             android:layout_width="match_parent"
@@ -20,17 +21,12 @@
             android:gravity="center"
             android:textColor="#f90101"
             android:textSize="25dp" />
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/favouriteList">
-
-
-        </ListView>
-
     </android.support.v7.widget.CardView>
 
-
-
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="10dp"
+        android:id="@+id/favouriteList">
+</ListView>
 </LinearLayout>

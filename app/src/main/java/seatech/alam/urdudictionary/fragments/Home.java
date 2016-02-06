@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import seatech.alam.urdudictionary.MainActivity;
 import seatech.alam.urdudictionary.R;
+import seatech.alam.urdudictionary.adapters.DefinitonListAdapter;
 import seatech.alam.urdudictionary.util.DBOpenHelper;
 import seatech.alam.urdudictionary.util.Globals;
 
@@ -30,7 +31,7 @@ import seatech.alam.urdudictionary.util.Globals;
 public class Home extends Fragment implements AdapterView.OnItemClickListener , View.OnClickListener{
 
     final String TAG = "Home Frag" ;
-    SearchView searchView ;
+    //SearchView searchView ; //removed because its taking hell lot of time .
     ListView suggestionListView;
     TextView suggestionCardLabel ;
     ImageView suggestionCardCancel ;
@@ -38,6 +39,8 @@ public class Home extends Fragment implements AdapterView.OnItemClickListener , 
     DBOpenHelper dbOpenHelper ;
     String word ;
     CardView suggestionCard ;
+    ListView wotdlist ;
+    TextView wotdtv ;
 
     private SimpleCursorAdapter mAdapter;
 
@@ -78,7 +81,7 @@ public class Home extends Fragment implements AdapterView.OnItemClickListener , 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment,container,false) ;
-        searchView = (SearchView) view.findViewById(R.id.searchView) ;
+
         suggestionCard = (CardView) view.findViewById(R.id.suggestionCard);
         suggestionCard.setVisibility(View.GONE);
         suggestionCardLabel = (TextView) view.findViewById(R.id.suggestionCardLabel) ;
@@ -86,11 +89,17 @@ public class Home extends Fragment implements AdapterView.OnItemClickListener , 
         suggestionListView.setOnItemClickListener(this);
         suggestionCardCancel = (ImageView) view.findViewById(R.id.suggestionCardCancel);
         suggestionCardCancel.setOnClickListener(this);
-        searchView.setSuggestionsAdapter(mAdapter);
-        searchView.setIconifiedByDefault(false);
-        searchView.setSubmitButtonEnabled(true);
+
+        wotdtv = (TextView) view.findViewById(R.id.wordinwotd) ;
+        wotdlist = (ListView) view.findViewById(R.id.wotdList) ;
+
+        //Removing searchview beacuase its taking hell lot of time ;
+        //searchView = (SearchView) view.findViewById(R.id.searchView) ;
+        //searchView.setSuggestionsAdapter(mAdapter);
+        //searchView.setIconifiedByDefault(false);
+        //searchView.setSubmitButtonEnabled(true);
         // Getting selected (clicked) item suggestion
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+       /* searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionClick(int position) {
                 // Your code here
@@ -122,7 +131,9 @@ public class Home extends Fragment implements AdapterView.OnItemClickListener , 
                 populateAdapter(s);
                 return false;
             }
-        });
+        });*/
+
+        setWotd();
 
         return view ;
     }
@@ -160,9 +171,22 @@ public class Home extends Fragment implements AdapterView.OnItemClickListener , 
         suggestionCardLabel.setText("Search Result for '"+query+"'");
         Cursor cursor = dbOpenHelper.getAllWord(query);
         cursor.moveToFirst();
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),android.R.layout.simple_list_item_1,cursor, new String[]{"word"},new int[]{android.R.id.text1});
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),R.layout.simple_list_item,cursor, new String[]{"word"},new int[]{R.id.text1});
         suggestionListView.setAdapter(adapter);
         Log.e(TAG, "suggestion is provided");
+    }
+
+    public void setWotd(){
+        String wotd = Globals.word_of_the_day ;
+        String roman = Globals.roman_wotd ;
+        String urdu = Globals.urdu_wotd ;
+        String[] romanlist = roman.split("\n");
+        String[] urdulist = urdu.split("\n");
+
+        wotdtv.setText(wotd);
+
+        DefinitonListAdapter definitonListAdapter = new DefinitonListAdapter(getActivity(),R.layout.twotvrow,urdulist,romanlist) ;
+        wotdlist.setAdapter(definitonListAdapter);
     }
 
     /**

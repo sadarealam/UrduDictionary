@@ -52,7 +52,8 @@
                 android:src="@drawable/remove"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:onClick="handleButton" />
+                android:onClick="deleteData"
+                 />
         </LinearLayout>
 
     </LinearLayout>

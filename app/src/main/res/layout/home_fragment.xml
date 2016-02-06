@@ -5,14 +5,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#a90000"
+
     android:fillViewport="false">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <android.support.v7.widget.CardView
+  <!-- Removing SearchView cause it was slowing down the app .
+
+   <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -31,12 +30,11 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
-        </android.support.v7.widget.CardView>
+    </android.support.v7.widget.CardView>-->
 
-        <android.support.v7.widget.CardView
+    <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/searchcard"
             android:id="@+id/suggestionCard"
             android:layout_margin="10dp">
 
@@ -50,6 +48,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Search Result for aal"
+                    android:textStyle="bold"
+                    android:textSize="15dp"
                     android:id="@+id/suggestionCardLabel"
                     android:textColor="@android:color/black"
                     android:layout_alignParentTop="true"
@@ -95,156 +95,52 @@
             android:layout_marginTop="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_below="@id/suggestionCard"
             android:id="@+id/wotdcard"
             >
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:padding="10dp">
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Word of the Day"
                 android:textSize="25dp"
-
                 android:textColor="#3399CC"
                 android:id="@+id/wotdtext" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:id="@+id/divider"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_below="@id/wotdtext"
-                    android:id="@+id/divider"
-                    />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider"
+                android:text="English word"
+                android:id="@+id/wordinwotd"
+                android:textColor="#8C8984"
+                android:padding="2dp"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginTop="3dp"
+                android:onClick="wotdClick" />
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/wotdList">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/divider"
-                    android:text="English word"
-                    android:id="@+id/wordinwotd"
-                    android:textColor="#8C8984"
-                    android:padding="2dp"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="3dp" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/wordinwotd"
-                    android:text="ایک تھوڑا سا"
-                    android:id="@+id/urduinwotd"
-                    android:textColor="#000000"
-                    android:textAlignment="inherit"
-                    android:padding="1dp"
-                    android:textSize="20dp" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/urduinwotd"
-                    android:text="ROMAN WORD"
-                    android:id="@+id/romaninwotd"
-                    android:textColor="#8C8984"
-                    android:visibility="visible"
-                    android:padding="1dp"
-                    android:typeface="serif"
-                    android:textSize="16dp" />
+            </ListView>
 
 
-            </RelativeLayout>
+            </LinearLayout>
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/view"
-            android:layout_below="@id/wotdcard"
 
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:padding="10dp"
-            android:layout_margin="10dp">
-
-          <LinearLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:id="@+id/pwotdcard"
-              android:padding="10dp"
-              android:background="#ffffff">
-              <TextView
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="Previous word of the Day"
-                  android:textColor="#3399CC"
-                  android:id="@+id/pwotdholder"
-                  android:textSize="25dp"
-                  android:typeface="sans" />
-              <View
-                  android:layout_width="match_parent"
-                  android:layout_height="1dp"
-                  android:background="@android:color/darker_gray"
-
-
-                  />
-
-              <TextView
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="Previous word of the Day 5"
-                  android:textColor="#CDB99C"
-                  android:textSize="20dp"
-                  android:textStyle="bold"
-                  android:padding="2dp"
-                  android:layout_marginTop="3dp"
-                  android:id="@+id/pwotd5" />
-              <TextView
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="Previous word of the Day 4"
-                  android:textColor="#d8c2a2"
-                  android:textSize="16dp"
-                  android:textStyle="bold"
-                  android:padding="1dp"
-                  android:id="@+id/pwotd4" />
-              <TextView
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="Previous word of the Day 3"
-                  android:textColor="#d8c2a2"
-                  android:textSize="16dp"
-                  android:textStyle="bold"
-                  android:padding="1dp"
-                  android:id="@+id/pwotd3" />
-              <TextView
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="Previous word of the Day 2"
-                  android:textColor="#d8c2a2"
-                  android:textSize="16dp"
-                  android:textStyle="bold"
-                  android:padding="1dp"
-                  android:id="@+id/pwotd2" />
-              <TextView
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="Previous word of the Day 1"
-                  android:textColor="#d8c2a2"
-                  android:textSize="16dp"
-                  android:textStyle="bold"
-                  android:padding="1dp"
-                  android:id="@+id/pwotd1" />
-
-          </LinearLayout>
-
-
-        </android.support.v7.widget.CardView>
-
-    </RelativeLayout>
 
 </LinearLayout>

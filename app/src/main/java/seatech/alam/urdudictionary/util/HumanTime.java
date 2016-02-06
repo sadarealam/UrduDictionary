@@ -1,5 +1,9 @@
 package seatech.alam.urdudictionary.util;
 
+
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,11 +18,15 @@ public class HumanTime {
         return (int)((new Date().getTime() - localDate.getTime()) / 86400000L);
     }
 
-    public static String getFriendlyTime(Date paramDate)
+    public static String getFriendlyTime(long paramStamp)
     {
-        StringBuffer localStringBuffer = new StringBuffer();
-        long l2 = (Calendar.getInstance().getTime().getTime() - paramDate.getTime()) / 1000L;
+        Date date = new Date(paramStamp);
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+        String dateFormatted = dateFormat.format(date);
 
-       return  null ;
+       return  dateFormatted ;
     }
+
+
 }

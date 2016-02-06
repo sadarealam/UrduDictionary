@@ -10,10 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import seatech.alam.urdudictionary.MainActivity;
 import seatech.alam.urdudictionary.R;
+import seatech.alam.urdudictionary.adapters.DefinitonListAdapter;
 import seatech.alam.urdudictionary.util.Globals;
 
 /**
@@ -27,6 +29,8 @@ public class Definition extends Fragment {
     TextView urdutv;
     TextView romantv;
     LinearLayout definitionHolder;
+    ListView definitionList ;
+    DefinitonListAdapter listAdapter ;
 
     @Override
     public void onAttach(Activity activity) {
@@ -47,7 +51,7 @@ public class Definition extends Fragment {
     public void onResume() {
         super.onResume();
         Log.e(TAG, "onResume() called ");
-        definitionHolder.removeAllViews();
+
         setDefinition();
     }
 
@@ -62,12 +66,9 @@ public class Definition extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.definiton_fragment,container,false);
         wordtv = (TextView) view.findViewById(R.id.defineword);
-        urdutv = (TextView) view.findViewById(R.id.defineurdu);
-        romantv = (TextView) view.findViewById(R.id.defineroman);
-        definitionHolder = (LinearLayout) view.findViewById(R.id.definitionholder);
 
-        urdutv.setVisibility(View.GONE);
-        romantv.setVisibility(View.GONE);
+        definitionList = (ListView) view.findViewById(R.id.definitionList);
+
 
         setDefinition();
 
@@ -89,23 +90,9 @@ public class Definition extends Fragment {
 
         wordtv.setText(word);
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        for(int i=0;i<urdulist.length;i++){
-            TextView tvu = new TextView(activity);
-            tvu.setLayoutParams(layoutParams);
-            tvu.setTextColor(Color.RED);
-            tvu.setTextSize(20);
-            tvu.setText(urdulist[i]);
+        listAdapter = new DefinitonListAdapter(getActivity(),R.layout.twotvrow,urdulist,romanlist);
+        definitionList.setAdapter(listAdapter);
 
-            TextView tvr = new TextView(activity);
-            tvr.setLayoutParams(layoutParams);
-            tvr.setTextColor(Color.BLACK);
-            tvr.setTextSize(20);
-            tvr.setText(romanlist[i]);
-
-            definitionHolder.addView(tvu);
-            definitionHolder.addView(tvr);
-        }
 
 
     }
