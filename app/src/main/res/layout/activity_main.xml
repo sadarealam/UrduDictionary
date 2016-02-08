@@ -25,7 +25,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/sliding_tabs"
-        android:background="#fdd0d0" />
+
+        android:background="#EEEEEE" />
+
+    <com.google.android.gms.ads.AdView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/adViewMain"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5461664183711638/2480462305"
+        >
+
+    </com.google.android.gms.ads.AdView>
 
     <!-- android:background="@drawable/green_at_ground_all"-->
 

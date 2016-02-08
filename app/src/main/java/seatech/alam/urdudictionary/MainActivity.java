@@ -22,8 +22,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdRequest.Builder ;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.ocpsoft.pretty.time.PrettyTime;
 
@@ -42,7 +43,7 @@ import seatech.alam.urdudictionary.util.DBOpenHelper;
 import seatech.alam.urdudictionary.util.Globals;
 import seatech.alam.urdudictionary.util.UserData;
 
-public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener, TabLayout.OnTabSelectedListener {
 
     final String TAG = "MainActivity";
     public ViewPager viewPager;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     SearchView searchView;
     public UserData userData ;
     private TextToSpeech textToSpeech ;
+    AdRequest adRequest ;
+    AdView mAdView ;
 
 
     @Override
@@ -59,13 +62,16 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupToolbar();
-        Log.e(TAG,"onCreate called");
+        Log.e(TAG, "onCreate called");
         textToSpeech = new TextToSpeech(this ,this) ;
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setOnTabSelectedListener(this);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         dbOpenHelper = new DBOpenHelper(this);
         userData = new UserData(this) ;
         try {
@@ -79,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         //setWotd();
         // Get the intent, verify the action and get the query
         handleIntent(getIntent());
+        mAdView = (AdView) findViewById(R.id.adViewMain);
+        adRequest = new AdRequest.Builder().build() ;
+        mAdView.loadAd(adRequest);
 
 
     }
@@ -208,8 +217,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             Log.e(TAG, "Action Search ");
             String query = intent.getStringExtra(SearchManager.QUERY);
-            searchView.setQuery(query, false);
-            searchView.clearFocus();
+            //searchView.setQuery(query, false);
+            //searchView.clearFocus();
             searchQuery(query);
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Log.e(TAG, "Intent  Action View ");
@@ -218,8 +227,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 String wordid = data.getLastPathSegment();
                 Log.e(TAG, "Action from toolbar with wid = " + wordid);
                 String word = dbOpenHelper.getWord(wordid);
-                searchView.setQuery(word, false);
-                searchView.clearFocus();
+                //searchView.setQuery(word, false);
+                //searchView.clearFocus();
                 setGData(word);
 
             } catch (NullPointerException npe) {
@@ -261,10 +270,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -279,6 +284,16 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     public void onStop() {
         super.onStop();
+        if(textToSpeech.isSpeaking()) textToSpeech.shutdown();
+        textToSpeech.shutdown();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        dbOpenHelper.close();
+        userData.close();
+        super.onDestroy();
     }
 
     public void onFavorite(View view){
@@ -288,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 Toast.makeText(this,"Already Your Favorite ",Toast.LENGTH_LONG).show();
             } else {
                 userData.insertValue(Globals.TYPE_FAB,Globals.current_word);
+                Toast.makeText(this,"Added to Favorite",Toast.LENGTH_SHORT).show();
                 Favourite favouriteFragment = (Favourite) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":2");
                 if (favouriteFragment != null) {
                     favouriteFragment.setFavouritData();
@@ -328,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         startDefinition();
     }
 
+
     @Override
     public void onInit(int status) {
         if(status == 0){
@@ -339,5 +356,20 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
         Toast.makeText(this, "Text to speech is not available in this device", Toast.LENGTH_SHORT).show();
         Log.e("UrduDictionary", "Could not initialize TextToSpeech.");
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+            viewPager.setCurrentItem(tab.getPosition(),true);
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 }

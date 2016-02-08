@@ -9,7 +9,7 @@
     android:fillViewport="false">
 
 
-  <!-- Removing SearchView cause it was slowing down the app .
+    <!-- Removing SearchView cause it was slowing down the app .
 
    <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -18,6 +18,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:id="@+id/searchcard"
+
             android:background="@android:color/darker_gray">
 
             <android.support.v7.widget.SearchView
@@ -36,6 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/suggestionCard"
+            style="@style/CardView"
             android:layout_margin="10dp">
 
             <RelativeLayout
@@ -45,14 +47,24 @@
                 android:padding="10dp"
                 >
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Search Result for aal"
-                    android:textStyle="bold"
-                    android:textSize="15dp"
-                    android:id="@+id/suggestionCardLabel"
-                    android:textColor="@android:color/black"
+                    android:text="Search Result for "
+                    android:textSize="17sp"
+                    android:id="@+id/suggestionCardnoLabel"
+                    android:textColor="@color/tv_secondary"
                     android:layout_alignParentTop="true"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/suggestionCardLabel"
+                    android:text="Model"
+                    android:textColor="@color/tv_secondary"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:layout_toEndOf="@id/suggestionCardnoLabel"
+                    android:layout_toRightOf="@id/suggestionCardnoLabel"
                     />
 
                 <ImageView
@@ -68,7 +80,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"
+                    android:background="@color/divider_color"
                     android:layout_below="@+id/suggestionCardLabel"
                     android:id="@+id/suggestionCardDivider"
                     />
@@ -89,20 +101,19 @@
         </android.support.v7.widget.CardView>
 
 
-        <android.support.v7.widget.CardView
+    <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:id="@+id/wotdcard"
-            >
+            style="@style/CardView"
+            android:id="@+id/wotdcard">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp"
-                >
+                android:padding="10dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -123,7 +134,7 @@
                 android:layout_below="@id/divider"
                 android:text="English word"
                 android:id="@+id/wordinwotd"
-                android:textColor="#8C8984"
+                android:textColor="@color/tv_primary"
                 android:padding="2dp"
                 android:gravity="center"
                 android:textSize="20dp"

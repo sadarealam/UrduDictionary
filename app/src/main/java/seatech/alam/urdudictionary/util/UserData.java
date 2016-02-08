@@ -42,6 +42,17 @@ public class UserData  {
     }
 
     public void insertValue(int type,String word){
+        if(type==Globals.TYPE_HISTORY ){
+            try {
+                Cursor cursor = isPresent(Globals.TYPE_HISTORY,word);
+                if(cursor.moveToFirst()) {
+                    long stamp = Long.parseLong(cursor.getString(1));
+                    deleteValues(stamp) ;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         ContentValues contentValues = new ContentValues();
         contentValues.put("STAMP",Long.valueOf(System.currentTimeMillis()));
         contentValues.put("TYPE",Integer.valueOf(type));
@@ -55,7 +66,7 @@ public class UserData  {
     }
 
     public Cursor isPresent(int type,String word) throws SQLException {
-        String query = "Select _id from "+DATABASE_TABLE+" where TYPE = "+type+" and WORD = '"+word+"' ;"  ;
+        String query = "Select _id,STAMP from "+DATABASE_TABLE+" where TYPE = "+type+" and WORD = '"+word+"' ;"  ;
         return mDb.rawQuery(query,null);
     }
 

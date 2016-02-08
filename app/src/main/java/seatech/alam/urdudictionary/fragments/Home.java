@@ -168,7 +168,7 @@ public class Home extends Fragment implements AdapterView.OnItemClickListener , 
     public void setSuggestion(String query){
         Log.e(TAG, "Show suggestion for " + query);
         suggestionCard.setVisibility(View.VISIBLE);
-        suggestionCardLabel.setText("Search Result for '"+query+"'");
+        suggestionCardLabel.setText(" '"+query+"'");
         Cursor cursor = dbOpenHelper.getAllWord(query);
         cursor.moveToFirst();
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),R.layout.simple_list_item,cursor, new String[]{"word"},new int[]{R.id.text1});

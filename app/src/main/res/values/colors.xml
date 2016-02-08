@@ -9,5 +9,8 @@
     <color name="my_secondary_text">#ffffff</color>
     <color name="my_icons">#FFFFFF</color>
     <color name="my_divider">#B6B6B6</color>
+    <color name="tv_primary">#212121</color>
+    <color name="tv_secondary">#727272</color>
+    <color name="divider_color">#B6B6B6</color>
 
 </resources>
